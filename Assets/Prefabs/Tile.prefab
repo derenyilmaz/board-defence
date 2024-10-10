@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5203991022106513927}
   - component: {fileID: 7742514410614499417}
   - component: {fileID: 7672436520883129341}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
+  presentDefenceItem: {fileID: 0}
+  presentEnemy: {fileID: 0}
 --- !u!61 &7672436520883129341
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -104,7 +106,7 @@ GameObject:
   - component: {fileID: 3527551327378975793}
   - component: {fileID: 7425935146843873531}
   - component: {fileID: 8664128469274195944}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: BG Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}

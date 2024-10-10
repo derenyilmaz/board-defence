@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level 1
   m_EditorClassIdentifier: 
   width: 4
-  height: 4
+  height: 8
   startingDefenceItemConfiguration:
   - defenceItemType: 1
     count: 3

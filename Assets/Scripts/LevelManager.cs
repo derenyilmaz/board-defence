@@ -1,8 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Serialization;
-using static Constants;
-using Random = UnityEngine.Random;
+﻿using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
@@ -37,17 +33,15 @@ public class LevelManager : MonoBehaviour
 
     private void SetupLevel(LevelFormat levelFormat)
     {
-        // -3 -7 -> +2 +2
-
         _tileMatrix = new GameTile[levelFormat.width, levelFormat.height];
         
         for (int j = 0; j < levelFormat.height; j++)
         {
             for (int i = 0; i < levelFormat.width; i++)
             {
-                var tile = Instantiate(
-                    gameTilePrefab, new Vector3(-3 + 2 * i, -5 + 2 * j, 0), Quaternion.identity, tileParent);
+                var tile = Instantiate(gameTilePrefab, parent: tileParent);
 
+                tile.transform.localPosition = new Vector3(2 * i, 2 * j, 0);
                 tile.xIndex = i;
                 tile.yIndex = j;
 
