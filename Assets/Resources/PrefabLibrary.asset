@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3acf6681c3349ad908a06a470c7517b, type: 3}
+  m_Name: PrefabLibrary
+  m_EditorClassIdentifier: 
+  defenceItemType2PrefabList:
+  - defenceItemType: 1
+    defenceItemPrefab: {fileID: 6750640486804338657, guid: 3eb29b7a93103b94391e68ed316b9076, type: 3}
+  - defenceItemType: 2
+    defenceItemPrefab: {fileID: 6750640486804338657, guid: d321529510685144e9997b396798e832, type: 3}
+  - defenceItemType: 3
+    defenceItemPrefab: {fileID: 6750640486804338657, guid: 3e85abfea3408e94c89be57ccae2bcac, type: 3}
+  enemyType2PrefabList: []
