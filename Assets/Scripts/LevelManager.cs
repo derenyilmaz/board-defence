@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
     
     private LevelLibrary _levelLibrary;
     private GameTile[,] _tileMatrix;
-    
+    private int _levelHeight;
     
     public void Configure()
     {
