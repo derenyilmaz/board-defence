@@ -38,6 +38,15 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void MoveToTile(GameTile newTile)
+    {
+        transform.SetParent(newTile.transform);
+        transform.localPosition = Vector3.zero;
+
+        _timeElapsedSinceLastMoveInSeconds = 0;
+        _canMove = false;
+    }
+    
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
@@ -9,7 +11,32 @@ public class LevelManager : MonoBehaviour
     private LevelLibrary _levelLibrary;
     private GameTile[,] _tileMatrix;
     private int _levelHeight;
-    
+
+    private void Start()
+    {
+        EventManager.OnEnemyReadyToMove += EnemyReadyToMoveEventHandler;
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.OnEnemyReadyToMove -= EnemyReadyToMoveEventHandler;
+    }
+
+    private void EnemyReadyToMoveEventHandler(object sender, EventManager.EnemyReadyToMoveEventArgs args)
+    {
+        var (x, y) = (args.Enemy.xIndex, args.Enemy.yIndex);
+        if (y == 0)
+        {
+            return;
+        }
+
+        args.Enemy.yIndex = y - 1;
+        _tileMatrix[x, y].presentEnemy = null;
+        _tileMatrix[x, y - 1].presentEnemy = args.Enemy;
+        
+        args.Enemy.MoveToTile(_tileMatrix[x, y - 1]);
+    }
+
     public void Configure()
     {
         _levelLibrary = Resources.Load<LevelLibrary>("LevelLibrary");
@@ -46,6 +73,11 @@ public class LevelManager : MonoBehaviour
                 tile.yIndex = j;
 
                 _tileMatrix[i, j] = tile;
+
+                if (j == levelFormat.height - 1)
+                {
+                    tile.SetSpawnPoint(new List<Constants.EnemyType>{ Constants.EnemyType.Enemy1, Constants.EnemyType.Enemy2, Constants.EnemyType.Enemy3});
+                }
             }
         }
         
