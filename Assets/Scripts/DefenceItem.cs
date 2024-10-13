@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 using static Constants;
 
 public class DefenceItem : MonoBehaviour
 {
-    [SerializeField] public float range;
+    // [SerializeField] public float range;
+    [SerializeField] public int leftXOffset;
+    [SerializeField] public int rightXOffset;
+    [SerializeField] public int bottomYOffset;
+    [SerializeField] public int topYOffset;
+    
 
     [SerializeField] private DefenceItemType defenceItemType;
     [SerializeField] private float damage;

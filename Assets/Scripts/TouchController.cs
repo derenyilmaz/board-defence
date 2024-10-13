@@ -7,6 +7,7 @@ public class TouchController : MonoBehaviour
     private Constants.DefenceItemType _selectedDefenceItemType = Constants.DefenceItemType.None;
     private PlacementTile _lastSelectedPlacementTile;
     private bool _touchEnabled = true;
+    private int _levelHeight;
 
     private PrefabLibrary _prefabLibrary;
     
@@ -14,12 +15,14 @@ public class TouchController : MonoBehaviour
     {
         _prefabLibrary = Resources.Load<PrefabLibrary>("PrefabLibrary");
         
+        EventManager.OnLevelStarted += LevelStartedEventArgs;
         EventManager.OnLevelFailed += LevelFailedEventHandler;
         EventManager.OnLevelWon += LevelWonEventHandler;
     }
 
     private void OnDestroy()
     {
+        EventManager.OnLevelStarted -= LevelStartedEventArgs;
         EventManager.OnLevelFailed -= LevelFailedEventHandler;
         EventManager.OnLevelWon -= LevelWonEventHandler;
     }
@@ -78,7 +81,8 @@ public class TouchController : MonoBehaviour
     
     private void HandleGameTileTouch(GameTile tappedGameTile)
     {
-        if (tappedGameTile.presentEnemy != null || tappedGameTile.presentDefenceItem != null)
+        if (tappedGameTile.presentEnemy != null || tappedGameTile.presentDefenceItem != null || 
+            tappedGameTile.yIndex >= _levelHeight / 2)
         {
             return;
         }
@@ -106,5 +110,10 @@ public class TouchController : MonoBehaviour
     private void LevelWonEventHandler(object sender, EventArgs args)
     {
         _touchEnabled = false;
+    }
+    
+    private void LevelStartedEventArgs(object sender, EventManager.LevelStartedEventArgs args)
+    {
+        _levelHeight = args.LevelFormat.height;
     }
 }

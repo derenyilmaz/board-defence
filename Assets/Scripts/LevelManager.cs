@@ -141,21 +141,21 @@ public class LevelManager : MonoBehaviour
         {
             return;
         }
-        
-        var range = defenceItem.range;
-        var (x, y) = (defenceItem.xIndex, defenceItem.yIndex);
 
-        for (int offset = 0; offset <= range; offset++)
+        for (int i = 0; i < _levelWidth; i++)
         {
-            if (!IsIndexValid(x, y + offset))
+            for (int j = 0; j < _levelHeight; j++)
             {
-                continue;
-            }
-
-            var presentEnemy = _tileMatrix[x, y + offset].presentEnemy;
-            if (presentEnemy != null)
-            {
-                defenceItem.Attack(presentEnemy);
+                if (!IndexInRangeOfDefenceItem(defenceItem, i, j))
+                {
+                    continue;
+                }
+                
+                var presentEnemy = _tileMatrix[i, j].presentEnemy;
+                if (presentEnemy != null)
+                {
+                    defenceItem.Attack(presentEnemy);
+                }
             }
         }
     }
@@ -173,10 +173,16 @@ public class LevelManager : MonoBehaviour
     private void EnemyReachedBaseEventHandler(object sender, EventArgs args)
     {
         _baseHealth--;
+        _totalEnemyCount--;
 
         if (_baseHealth <= 0)
         {
             EventManager.LevelFailed();
+        }
+        
+        if (_totalEnemyCount <= 0)
+        {
+            EventManager.LevelWon();
         }
     }
 
@@ -215,6 +221,14 @@ public class LevelManager : MonoBehaviour
             _tileMatrix[i, _levelHeight-1].SetSpawnPoint(allEnemyTypes.GetRange(lastIndex, countForThisColumn));
             lastIndex += countForThisColumn;
         }
+    }
+
+    private bool IndexInRangeOfDefenceItem(DefenceItem defenceItem, int xIndex, int yIndex)
+    {
+        return xIndex >= defenceItem.xIndex - defenceItem.leftXOffset && 
+               xIndex <= defenceItem.xIndex + defenceItem.rightXOffset &&
+               yIndex >= defenceItem.yIndex - defenceItem.bottomYOffset &&
+               yIndex <= defenceItem.yIndex + defenceItem.topYOffset;
     }
 }
 

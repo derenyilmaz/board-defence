@@ -130,8 +130,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   range: 1
+  leftXOffset: 1
+  rightXOffset: 1
+  bottomYOffset: 1
+  topYOffset: 1
   defenceItemType: 3
   damage: 10
   intervalInSeconds: 5
   xIndex: 0
   yIndex: 0
+  canAttack: 1
