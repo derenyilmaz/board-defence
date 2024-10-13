@@ -12,17 +12,31 @@ public class LevelManager : MonoBehaviour
     private GameTile[,] _tileMatrix;
     private int _levelHeight;
     private int _levelWidth;
+    private int _baseHealth;
 
+    
     private void Start()
     {
         EventManager.OnEnemyReadyToMove += EnemyReadyToMoveEventHandler;
         EventManager.OnDefenceItemReadyToAttack += DefenceItemReadyToAttackEventHandler;
+        EventManager.OnEnemyReachedBase += EnemyReachedBaseEventHandler;
+    }
+
+    private void EnemyReachedBaseEventHandler(object sender, EventArgs args)
+    {
+        _baseHealth--;
+
+        if (_baseHealth <= 0)
+        {
+            EventManager.LevelFailed();
+        }
     }
 
     private void OnDestroy()
     {
         EventManager.OnEnemyReadyToMove -= EnemyReadyToMoveEventHandler;
         EventManager.OnDefenceItemReadyToAttack -= DefenceItemReadyToAttackEventHandler;
+        EventManager.OnEnemyReachedBase -= EnemyReachedBaseEventHandler;
     }
 
     private void EnemyReadyToMoveEventHandler(object sender, EventManager.EnemyReadyToMoveEventArgs args)
@@ -30,6 +44,8 @@ public class LevelManager : MonoBehaviour
         var (x, y) = (args.Enemy.xIndex, args.Enemy.yIndex);
         if (y == 0)
         {
+            EventManager.EnemyReachedBase();
+            Destroy(args.Enemy.gameObject);
             return;
         }
 
@@ -88,6 +104,13 @@ public class LevelManager : MonoBehaviour
                 }
             }
         }
+
+        foreach (var enemy2Count in levelFormat.enemyConfiguration)
+        {
+            _baseHealth += enemy2Count.count;
+        }
+
+        _baseHealth /= 2;
         
         EventManager.LevelStarted(levelFormat);
     }

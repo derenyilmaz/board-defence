@@ -33,6 +33,7 @@ public static class EventManager
     public static event EventHandler<EnemyDiedEventArgs> OnEnemyDied;
     public static event EventHandler<LevelStartedEventArgs> OnLevelStarted;
 
+    public static event EventHandler OnEnemyReachedBase;
     public static event EventHandler OnLevelFailed;
     public static event EventHandler OnLevelWon;
     
@@ -70,5 +71,10 @@ public static class EventManager
     public static void LevelWon()
     {
         OnLevelWon?.Invoke(null, EventArgs.Empty);
+    }
+
+    public static void EnemyReachedBase()
+    {
+        OnEnemyReachedBase?.Invoke(null, EventArgs.Empty);
     }
 }

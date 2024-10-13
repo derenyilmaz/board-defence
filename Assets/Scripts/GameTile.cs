@@ -5,6 +5,9 @@ using static Constants;
 
 public class GameTile : MonoBehaviour
 {
+    private const float EnemySpawnDelayInSeconds = 3f;
+    
+    
     public int xIndex;
     public int yIndex;
 
@@ -13,7 +16,7 @@ public class GameTile : MonoBehaviour
 
 
     private EnemySpawnComponent _enemySpawnComponent;
-    private float _timeElapsedSinceLastSpawn; 
+    private float _timeElapsedSinceLastSpawn;
     
     private void FixedUpdate()
     {
@@ -24,7 +27,7 @@ public class GameTile : MonoBehaviour
 
         _timeElapsedSinceLastSpawn += Time.fixedDeltaTime;
 
-        if (_timeElapsedSinceLastSpawn >= 5f)
+        if (_timeElapsedSinceLastSpawn >= EnemySpawnDelayInSeconds)
         {
             SpawnEnemy();
         }

@@ -19,6 +19,12 @@ public class Enemy : MonoBehaviour
     
     private void Start()
     {
+        if (speed == 0)
+        {
+            // is this really needed?
+            _moveTimeInSeconds = Mathf.Infinity;
+        }
+        
         _moveTimeInSeconds = 1 / speed;
     }
 
