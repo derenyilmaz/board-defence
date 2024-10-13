@@ -5,7 +5,7 @@ public class Board : MonoBehaviour
 {
     private LevelManager _levelManager;
  
-    private void Awake()
+    private void Start()
     {
         EventManager.OnLevelStarted += LevelStartedEventHandler;
     
