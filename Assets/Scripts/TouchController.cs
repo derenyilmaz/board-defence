@@ -83,6 +83,9 @@ public class TouchController : MonoBehaviour
             var defenceItemPrefab = _prefabLibrary.GetDefenceItemPrefabFromType(_selectedDefenceItemType);
             var defenceItem = Instantiate(defenceItemPrefab, parent: tappedGameTile.transform);
 
+            defenceItem.xIndex = tappedGameTile.xIndex;
+            defenceItem.yIndex = tappedGameTile.yIndex;
+            
             tappedGameTile.presentDefenceItem = defenceItem;
 
             _lastSelectedPlacementTile.Count--;

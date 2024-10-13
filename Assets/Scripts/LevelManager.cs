@@ -11,15 +11,18 @@ public class LevelManager : MonoBehaviour
     private LevelLibrary _levelLibrary;
     private GameTile[,] _tileMatrix;
     private int _levelHeight;
+    private int _levelWidth;
 
     private void Start()
     {
         EventManager.OnEnemyReadyToMove += EnemyReadyToMoveEventHandler;
+        EventManager.OnDefenceItemReadyToAttack += DefenceItemReadyToAttackEventHandler;
     }
 
     private void OnDestroy()
     {
         EventManager.OnEnemyReadyToMove -= EnemyReadyToMoveEventHandler;
+        EventManager.OnDefenceItemReadyToAttack -= DefenceItemReadyToAttackEventHandler;
     }
 
     private void EnemyReadyToMoveEventHandler(object sender, EventManager.EnemyReadyToMoveEventArgs args)
@@ -35,6 +38,8 @@ public class LevelManager : MonoBehaviour
         _tileMatrix[x, y - 1].presentEnemy = args.Enemy;
         
         args.Enemy.MoveToTile(_tileMatrix[x, y - 1]);
+        
+        CheckAttackers();
     }
 
     public void Configure()
@@ -60,6 +65,9 @@ public class LevelManager : MonoBehaviour
 
     private void SetupLevel(LevelFormat levelFormat)
     {
+        _levelHeight = levelFormat.height;
+        _levelWidth = levelFormat.width;
+        
         _tileMatrix = new GameTile[levelFormat.width, levelFormat.height];
         
         for (int j = 0; j < levelFormat.height; j++)
@@ -76,13 +84,57 @@ public class LevelManager : MonoBehaviour
 
                 if (j == levelFormat.height - 1)
                 {
-                    tile.SetSpawnPoint(new List<Constants.EnemyType>{ Constants.EnemyType.Enemy1, Constants.EnemyType.Enemy2, Constants.EnemyType.Enemy3});
+                    tile.SetSpawnPoint(new List<Constants.EnemyType>{ Constants.EnemyType.Enemy1 });
                 }
             }
         }
         
         EventManager.LevelStarted(levelFormat);
     }
+
+    private bool IsIndexValid(int x, int y)
+    {
+        return 0 <= x && x < _tileMatrix.GetLength(0) && 0 <= y && y < _tileMatrix.GetLength(1);
+    }
     
+    private void DefenceItemReadyToAttackEventHandler(object sender, EventManager.DefenceItemReadyToAttackEventArgs args)
+    {
+        CheckRangeOfAttacker(args.DefenceItem);
+    }
     
+    private void CheckAttackers()
+    {
+        for (int i = 0; i < _levelWidth; i++)
+        {
+            for (int j = 0; j < _levelHeight; j++)
+            {
+                var tile = _tileMatrix[i, j];
+
+                if (tile.presentDefenceItem != null)
+                {
+                    CheckRangeOfAttacker(tile.presentDefenceItem);
+                }
+            }
+        }
+    }
+
+    private void CheckRangeOfAttacker(DefenceItem defenceItem)
+    {
+        var range = defenceItem.range;
+        var (x, y) = (defenceItem.xIndex, defenceItem.yIndex);
+
+        for (int offset = 0; offset <= range; offset++)
+        {
+            if (!IsIndexValid(x, y + offset))
+            {
+                continue;
+            }
+
+            var presentEnemy = _tileMatrix[x, y + offset].presentEnemy;
+            if (presentEnemy != null)
+            {
+                defenceItem.Attack(presentEnemy);
+            }
+        }
+    }
 }
