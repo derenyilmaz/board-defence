@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using static Constants;
 
 public class DefenceItem : MonoBehaviour
@@ -8,7 +9,7 @@ public class DefenceItem : MonoBehaviour
     [SerializeField] public int rightXOffset;
     [SerializeField] public int bottomYOffset;
     [SerializeField] public int topYOffset;
-    
+
 
     [SerializeField] private DefenceItemType defenceItemType;
     [SerializeField] private float damage;

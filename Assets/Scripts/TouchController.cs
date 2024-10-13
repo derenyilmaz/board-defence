@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class TouchController : MonoBehaviour
 {
+    private CursorFollowerImage _cursorFollowerImage;
     private Constants.DefenceItemType _selectedDefenceItemType = Constants.DefenceItemType.None;
     private PlacementTile _lastSelectedPlacementTile;
     private bool _touchEnabled = true;
@@ -11,9 +15,12 @@ public class TouchController : MonoBehaviour
 
     private PrefabLibrary _prefabLibrary;
     
+    
     private void Awake()
     {
         _prefabLibrary = Resources.Load<PrefabLibrary>("PrefabLibrary");
+
+        _cursorFollowerImage = GetComponentInChildren<CursorFollowerImage>();
         
         EventManager.OnLevelStarted += LevelStartedEventHandler;
         EventManager.OnLevelFailed += LevelFailedEventHandler;
@@ -32,13 +39,23 @@ public class TouchController : MonoBehaviour
     {
         if (!_touchEnabled)
         {
+            _cursorFollowerImage.Hide();
+            return;
+        }
+
+        if (Camera.main == null)
+        {
             return;
         }
         
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        _cursorFollowerImage.transform.position = new Vector3(mousePosition.x, mousePosition.y, 0);
+
         if (Input.GetMouseButtonDown(0))
         {
             var raycastHit = Physics2D.Raycast(
-                origin: Camera.main.ScreenToWorldPoint(Input.mousePosition),
+                origin: mousePosition,
                 direction: Vector3.forward,
                 distance: 100f);
 
@@ -76,6 +93,11 @@ public class TouchController : MonoBehaviour
         {
             _selectedDefenceItemType = tappedPlacementTile.defenceItemType;
             _lastSelectedPlacementTile = tappedPlacementTile;
+
+            var sprite = _prefabLibrary.GetDefenceItemPrefabFromType(
+                    _selectedDefenceItemType).GetComponentInChildren<Image>().sprite; 
+            
+            _cursorFollowerImage.SetSpriteAndShow(sprite);
         }
     }
     
@@ -99,6 +121,8 @@ public class TouchController : MonoBehaviour
 
             _lastSelectedPlacementTile.Count--;
             _selectedDefenceItemType = Constants.DefenceItemType.None;
+
+            _cursorFollowerImage.Hide();
         }
     }
 
@@ -116,4 +140,11 @@ public class TouchController : MonoBehaviour
     {
         _levelHeight = args.LevelFormat.height;
     }
+}
+
+[Serializable]
+public class DefenceItemType2Sprite
+{
+    public Constants.DefenceItemType defenceItemType;
+    public Sprite sprite;
 }
