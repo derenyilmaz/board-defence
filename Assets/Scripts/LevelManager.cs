@@ -169,6 +169,7 @@ public class LevelManager : MonoBehaviour
                 if (presentEnemy != null)
                 {
                     defenceItem.Attack(presentEnemy);
+                    return;
                 }
             }
         }
