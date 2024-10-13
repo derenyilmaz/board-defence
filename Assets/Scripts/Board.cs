@@ -1,10 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(LevelManager))]
+[RequireComponent(typeof(TouchController))]
 public class Board : MonoBehaviour
 {
     private LevelManager _levelManager;
- 
+    private GridLayoutGroup _layoutGroup;
+
+    private void Awake()
+    {
+        _layoutGroup = GetComponentInChildren<GridLayoutGroup>();
+    }
+
     private void Start()
     {
         EventManager.OnLevelStarted += LevelStartedEventHandler;
@@ -13,7 +22,7 @@ public class Board : MonoBehaviour
         
         _levelManager.Configure();
     }
-
+    
     private void OnDestroy()
     {
         EventManager.OnLevelStarted -= LevelStartedEventHandler;
@@ -21,10 +30,18 @@ public class Board : MonoBehaviour
 
     private void LevelStartedEventHandler(object sender, EventManager.LevelStartedEventArgs args)
     {
-        // todo: magic numbers
-        var scaleFactor = Mathf.Min(4f / args.LevelFormat.width, 7f / args.LevelFormat.height);
-        transform.localScale *= scaleFactor;
-        // transform.position = new Vector3(-(args.LevelFormat.width - 1) / 2f, -5f, 0);
-    }
+        if (!_layoutGroup)
+        {
+            return;
+        }
+        
+        _layoutGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+        _layoutGroup.constraintCount = args.LevelFormat.height;
 
+        var scaleFactor = Mathf.Min(6f / args.LevelFormat.height, 4f / args.LevelFormat.width);
+        
+        _layoutGroup.cellSize *= scaleFactor;
+        _layoutGroup.spacing *= scaleFactor;
+        
+    }
 }                                       

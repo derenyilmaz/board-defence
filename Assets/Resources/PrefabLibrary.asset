@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defenceItemType2PrefabList:
   - defenceItemType: 1
-    defenceItemPrefab: {fileID: 6750640486804338657, guid: 3eb29b7a93103b94391e68ed316b9076, type: 3}
+    defenceItemPrefab: {fileID: 7635477199861872080, guid: dc1796af4892d6146af997b2f157a3b5, type: 3}
   - defenceItemType: 2
-    defenceItemPrefab: {fileID: 6750640486804338657, guid: d321529510685144e9997b396798e832, type: 3}
+    defenceItemPrefab: {fileID: 7635477199861872080, guid: 6cf943aea6596824eb0b4d14ff37b6ba, type: 3}
   - defenceItemType: 3
-    defenceItemPrefab: {fileID: 6750640486804338657, guid: 3e85abfea3408e94c89be57ccae2bcac, type: 3}
+    defenceItemPrefab: {fileID: 7635477199861872080, guid: 2c9e7992f40365c4aa8ca53d75c5a7e1, type: 3}
   enemyType2PrefabList:
   - enemyType: 1
     enemyPrefab: {fileID: 3622393597856944429, guid: 29d427c37e5a3d544931c127807f43a7, type: 3}
   - enemyType: 2
-    enemyPrefab: {fileID: 3622393597856944429, guid: c679ce5a0843f0848b746f218efe7fca, type: 3}
+    enemyPrefab: {fileID: 3622393597856944429, guid: 66e1d55721b892a488dbf1fcb4d9d8c6, type: 3}
   - enemyType: 3
-    enemyPrefab: {fileID: 3622393597856944429, guid: 3ed4a4ee4221cb1419f2d4fba3ba4a95, type: 3}
+    enemyPrefab: {fileID: 3622393597856944429, guid: 07fe1f0599f8de7478333db616d9f15e, type: 3}

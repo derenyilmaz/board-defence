@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,15 +9,32 @@ public class LevelManager : MonoBehaviour
 {
     [SerializeField] private Transform tileParent;
     [SerializeField] private GameTile gameTilePrefab;
+    [SerializeField] private TextMeshProUGUI healthText;
     
-    
+
     private LevelLibrary _levelLibrary;
     private GameTile[,] _tileMatrix;
     private int _levelHeight;
     private int _levelWidth;
-    private int _baseHealth;
+    private int _currentHealth;
+    private int _maxHealth;
     private int _totalEnemyCount;
 
+    private int CurrentHealth
+    {
+        get => _currentHealth;
+        set
+        {
+            if (value <= 0)
+            {
+                value = 0;
+                EventManager.LevelFailed();
+            }
+            
+            _currentHealth = value;
+            healthText.text = $"{value}/{_maxHealth}";
+        }
+    }
     
     private void Start()
     {
@@ -89,7 +107,7 @@ public class LevelManager : MonoBehaviour
             {
                 var tile = Instantiate(gameTilePrefab, parent: tileParent);
 
-                tile.transform.localPosition = new Vector3(2 * i, 2 * j, 0);
+                // tile.transform.position = new Vector3(2 * i, 2 * j, 0);
                 tile.xIndex = i;
                 tile.yIndex = j;
 
@@ -104,16 +122,12 @@ public class LevelManager : MonoBehaviour
             _totalEnemyCount += enemy2Count.count;
         }
 
-        _baseHealth = _totalEnemyCount / 2;
+        _maxHealth = _totalEnemyCount / 2;
+        CurrentHealth = _maxHealth;
         
         EventManager.LevelStarted(levelFormat);
     }
 
-    private bool IsIndexValid(int x, int y)
-    {
-        return 0 <= x && x < _tileMatrix.GetLength(0) && 0 <= y && y < _tileMatrix.GetLength(1);
-    }
-    
     private void DefenceItemReadyToAttackEventHandler(object sender, EventManager.DefenceItemReadyToAttackEventArgs args)
     {
         CheckRangeOfAttacker(args.DefenceItem);
@@ -172,15 +186,10 @@ public class LevelManager : MonoBehaviour
 
     private void EnemyReachedBaseEventHandler(object sender, EventArgs args)
     {
-        _baseHealth--;
+        CurrentHealth--;
         _totalEnemyCount--;
 
-        if (_baseHealth <= 0)
-        {
-            EventManager.LevelFailed();
-        }
-        
-        if (_totalEnemyCount <= 0)
+        if (CurrentHealth > 0 && _totalEnemyCount <= 0)
         {
             EventManager.LevelWon();
         }
