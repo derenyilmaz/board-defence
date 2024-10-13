@@ -22,5 +22,9 @@ MonoBehaviour:
   - defenceItemType: 3
     count: 5
   enemyConfiguration:
+  - enemyType: 1
+    count: 7
+  - enemyType: 2
+    count: 3
   - enemyType: 3
     count: 5

@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour
     private float _timeElapsedSinceLastMoveInSeconds;
     private float _moveTimeInSeconds;
     private bool _canMove;
+    private bool _dead;
 
     
     private void Start()
@@ -68,8 +69,9 @@ public class Enemy : MonoBehaviour
                 () => _spriteRenderer.DOColor(Color.white, 0.1f));
         }
 
-        if (health <= 0)
+        if (health <= 0 && !_dead)
         {
+            _dead = true;
             EventManager.EnemyDied(enemyType);
             Destroy(gameObject);
         }
