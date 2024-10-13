@@ -51,5 +51,7 @@ public class GameTile : MonoBehaviour
         presentEnemy = nextEnemy;
         presentEnemy.xIndex = xIndex;
         presentEnemy.yIndex = yIndex;
+
+        _timeElapsedSinceLastSpawn = 0;
     }
 }

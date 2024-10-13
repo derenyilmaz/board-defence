@@ -1,10 +1,14 @@
 
 using System;
+using TMPro;
 using UnityEngine;
 using static Constants;
 
 public class PlacementTile : MonoBehaviour
 {
+    [SerializeField] private TextMeshPro countText;
+    
+    
     public DefenceItemType defenceItemType;
     public int Count
     {
@@ -12,6 +16,8 @@ public class PlacementTile : MonoBehaviour
         set
         {
             _count = value;
+            countText.text = value.ToString();
+            
             if (value <= 0)
             {
                 Deactivate();

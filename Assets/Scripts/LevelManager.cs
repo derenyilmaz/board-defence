@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LevelManager : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class LevelManager : MonoBehaviour
     private int _levelHeight;
     private int _levelWidth;
     private int _baseHealth;
+    private int _totalEnemyCount;
 
     
     private void Start()
@@ -20,23 +23,17 @@ public class LevelManager : MonoBehaviour
         EventManager.OnEnemyReadyToMove += EnemyReadyToMoveEventHandler;
         EventManager.OnDefenceItemReadyToAttack += DefenceItemReadyToAttackEventHandler;
         EventManager.OnEnemyReachedBase += EnemyReachedBaseEventHandler;
+        EventManager.OnEnemyDied += EnemyDiedEventHandler;
     }
 
-    private void EnemyReachedBaseEventHandler(object sender, EventArgs args)
-    {
-        _baseHealth--;
-
-        if (_baseHealth <= 0)
-        {
-            EventManager.LevelFailed();
-        }
-    }
+    
 
     private void OnDestroy()
     {
         EventManager.OnEnemyReadyToMove -= EnemyReadyToMoveEventHandler;
         EventManager.OnDefenceItemReadyToAttack -= DefenceItemReadyToAttackEventHandler;
         EventManager.OnEnemyReachedBase -= EnemyReachedBaseEventHandler;
+        EventManager.OnEnemyDied -= EnemyDiedEventHandler;
     }
 
     private void EnemyReadyToMoveEventHandler(object sender, EventManager.EnemyReadyToMoveEventArgs args)
@@ -62,14 +59,14 @@ public class LevelManager : MonoBehaviour
     {
         _levelLibrary = Resources.Load<LevelLibrary>("LevelLibrary");
 
-        var levelIndex = PlayerPrefs.GetInt("levelIndex", defaultValue: 0);
+        var levelIndex = PlayerPrefs.GetInt(Constants.LevelIndexKey, defaultValue: 0);
         
         LoadLevelByIndex(levelIndex);
     }
     
     private void LoadLevelByIndex(int index)
     {
-        if(index < 0 || index >= _levelLibrary.levelList.Count)
+        if(index < 0)
         {
             return;
         }
@@ -97,20 +94,17 @@ public class LevelManager : MonoBehaviour
                 tile.yIndex = j;
 
                 _tileMatrix[i, j] = tile;
-
-                if (j == levelFormat.height - 1)
-                {
-                    tile.SetSpawnPoint(new List<Constants.EnemyType>{ Constants.EnemyType.Enemy1 });
-                }
             }
         }
+        
+        SetSpawnPoints(levelFormat.enemyConfiguration);
 
         foreach (var enemy2Count in levelFormat.enemyConfiguration)
         {
-            _baseHealth += enemy2Count.count;
+            _totalEnemyCount += enemy2Count.count;
         }
 
-        _baseHealth /= 2;
+        _baseHealth = _totalEnemyCount / 2;
         
         EventManager.LevelStarted(levelFormat);
     }
@@ -143,6 +137,11 @@ public class LevelManager : MonoBehaviour
 
     private void CheckRangeOfAttacker(DefenceItem defenceItem)
     {
+        if (!defenceItem.canAttack)
+        {
+            return;
+        }
+        
         var range = defenceItem.range;
         var (x, y) = (defenceItem.xIndex, defenceItem.yIndex);
 
@@ -160,4 +159,62 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+    
+    private void EnemyDiedEventHandler(object sender, EventManager.EnemyDiedEventArgs args)
+    {
+        _totalEnemyCount--;
+
+        if (_totalEnemyCount <= 0)
+        {
+            EventManager.LevelWon();
+        }
+    }
+
+    private void EnemyReachedBaseEventHandler(object sender, EventArgs args)
+    {
+        _baseHealth--;
+
+        if (_baseHealth <= 0)
+        {
+            EventManager.LevelFailed();
+        }
+    }
+
+    private void SetSpawnPoints(List<Enemy2Count> enemy2CountList)
+    {
+        var allEnemyTypes = new List<Constants.EnemyType>();
+
+        foreach (var enemy2Count in enemy2CountList)
+        {
+            allEnemyTypes.AddRange(Enumerable.Repeat(enemy2Count.enemyType, enemy2Count.count));
+        }
+        
+        // shuffle the list to randomize generation
+        allEnemyTypes = allEnemyTypes.OrderBy(_ => Guid.NewGuid()).ToList();
+
+        var enemyPerColumn = allEnemyTypes.Count / _levelWidth;
+        var generationCounts = new List<int>();
+
+        for (int i = 0; i < _levelWidth; i++)
+        {
+            generationCounts.Add(enemyPerColumn);
+        }
+        
+        var remainder = allEnemyTypes.Count % _levelWidth;
+        
+        for (int i = 0; i < remainder; i++)
+        {
+            var randomColumn = Random.Range(0, _levelWidth);
+            generationCounts[randomColumn]++;
+        }
+
+        var lastIndex = 0;
+        for (int i = 0; i < _levelWidth; i++)
+        {
+            var countForThisColumn = generationCounts[i];
+            _tileMatrix[i, _levelHeight-1].SetSpawnPoint(allEnemyTypes.GetRange(lastIndex, countForThisColumn));
+            lastIndex += countForThisColumn;
+        }
+    }
 }
+

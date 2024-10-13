@@ -15,11 +15,13 @@ public class TouchController : MonoBehaviour
         _prefabLibrary = Resources.Load<PrefabLibrary>("PrefabLibrary");
         
         EventManager.OnLevelFailed += LevelFailedEventHandler;
+        EventManager.OnLevelWon += LevelWonEventHandler;
     }
 
     private void OnDestroy()
     {
         EventManager.OnLevelFailed -= LevelFailedEventHandler;
+        EventManager.OnLevelWon -= LevelWonEventHandler;
     }
     
 
@@ -95,9 +97,13 @@ public class TouchController : MonoBehaviour
             _selectedDefenceItemType = Constants.DefenceItemType.None;
         }
     }
-    
-    
+
     private void LevelFailedEventHandler(object sender, EventArgs args)
+    {
+        _touchEnabled = false;
+    }
+    
+    private void LevelWonEventHandler(object sender, EventArgs args)
     {
         _touchEnabled = false;
     }

@@ -1,5 +1,7 @@
 ﻿public static class Constants
 {
+    public const string LevelIndexKey = "levelIndex";
+    
     public enum DefenceItemType
     {
         None = 0,

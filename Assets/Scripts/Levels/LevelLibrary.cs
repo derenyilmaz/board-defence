@@ -8,11 +8,11 @@ public class LevelLibrary : ScriptableObject
 
     public LevelFormat GetLevelByIndex(int index)
     {
-        if (index < 0 || index >= levelList.Count)
+        if (index < 0)
         {
             return null;
         }
 
-        return levelList[index];
+        return index >= levelList.Count ? levelList[^1] : levelList[index];
     }
 }

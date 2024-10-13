@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using static Constants;
 
 public class DefenceItem : MonoBehaviour
@@ -12,11 +13,11 @@ public class DefenceItem : MonoBehaviour
     
     [HideInInspector] public int xIndex;
     [HideInInspector] public int yIndex;
+    [HideInInspector] public bool canAttack = true;
     
     // todo: how to deal with directions?
 
     private float _timeElapsedSinceLastAttackInSeconds;
-    private bool _canAttack = true;
 
     private void Start()
     {
@@ -25,7 +26,7 @@ public class DefenceItem : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_canAttack)
+        if (canAttack)
         {
             return;
         }
@@ -34,7 +35,7 @@ public class DefenceItem : MonoBehaviour
 
         if (_timeElapsedSinceLastAttackInSeconds >= intervalInSeconds)
         {
-            _canAttack = true;
+            canAttack = true;
             EventManager.DefenceItemReadyToAttack(this);
         }
     }
@@ -44,6 +45,6 @@ public class DefenceItem : MonoBehaviour
         enemy.TakeDamage(damage);
         
         _timeElapsedSinceLastAttackInSeconds = 0f;
-        _canAttack = false;
+        canAttack = false;
     }
 }

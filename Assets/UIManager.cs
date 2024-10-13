@@ -10,11 +10,13 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         EventManager.OnLevelFailed += LevelFailedEventHandler;
+        EventManager.OnLevelWon += LevelWonEventHandler;
     }
 
     private void OnDestroy()
     {
         EventManager.OnLevelFailed -= LevelFailedEventHandler;
+        EventManager.OnLevelWon -= LevelWonEventHandler;
     }
 
     public void ReloadScene()
@@ -25,5 +27,13 @@ public class UIManager : MonoBehaviour
     private void LevelFailedEventHandler(object sender, EventArgs args)
     {
         failPanel.SetActive(true);
+    }
+    
+    private void LevelWonEventHandler(object sender, EventArgs args)
+    {
+        var currentLevel = PlayerPrefs.GetInt(Constants.LevelIndexKey, defaultValue: 0);
+        PlayerPrefs.SetInt(Constants.LevelIndexKey, currentLevel + 1);
+        
+        winPanel.SetActive(true);
     }
 }

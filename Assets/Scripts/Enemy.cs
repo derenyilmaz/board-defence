@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using static Constants;
 
 public class Enemy : MonoBehaviour
@@ -10,7 +11,9 @@ public class Enemy : MonoBehaviour
     
     [HideInInspector] public int xIndex;
     [HideInInspector] public int yIndex;
+
     
+    private SpriteRenderer _spriteRenderer;
     
     private float _timeElapsedSinceLastMoveInSeconds;
     private float _moveTimeInSeconds;
@@ -26,6 +29,7 @@ public class Enemy : MonoBehaviour
         }
         
         _moveTimeInSeconds = 1 / speed;
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void FixedUpdate()
@@ -56,6 +60,13 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
+
+        if (_spriteRenderer)
+        {
+            // a red flash to denote the enemy took damage 
+            _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(
+                () => _spriteRenderer.DOColor(Color.white, 0.1f));
+        }
 
         if (health <= 0)
         {
