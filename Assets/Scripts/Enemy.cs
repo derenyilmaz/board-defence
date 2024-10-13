@@ -74,7 +74,15 @@ public class Enemy : MonoBehaviour
         {
             _dead = true;
             EventManager.EnemyDied(enemyType);
-            Destroy(gameObject);
+            
+            if (_image)
+            {
+                _image.transform.DOScale(0f, 0.2f).OnComplete(() => Destroy(gameObject));
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
